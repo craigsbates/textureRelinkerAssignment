@@ -6,18 +6,18 @@ from maya import cmds
 from PySide6 import QtWidgets
 
 
-def get_all_texture_paths(folderPath):
+def get_all_texture_paths(texture_dir):
     """Collate all filepaths under given folder into a dict 
     with the key as the path basename
 
     Args:
-        folderPath (str): Path to folder containing textures
+        texture_dir (str): Path to folder containing textures
 
     Returns:
         dict: Dictionary of texture_basename: filepath to texture
     """
     texture_info = {}
-    for dirpath, dirnames, filenames in os.walk(folderPath):
+    for dirpath, dirnames, filenames in os.walk(texture_dir):
         for filename in filenames:
             if filename not in texture_info:
                 texture_info[filename] = os.path.join(dirpath, filename)
