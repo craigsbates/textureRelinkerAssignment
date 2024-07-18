@@ -6,6 +6,25 @@ import maya.cmds as cmds
 from PySide6 import QtWidgets
 
 
+def get_all_texture_paths(folderPath):
+    """Collate all filepaths under given folder into a dict 
+    with the key as the path basename
+
+    Args:
+        folderPath (str): Path to folder containing textures
+
+    Returns:
+        dict: Dictionary of texture_basename: filepath to texture
+    """
+    texture_info = {}
+    for dirpath, dirnames, filenames in os.walk(folderPath):
+        for filename in filenames:
+            if filename not in texture_info:
+                texture_info[filename] = os.path.join(dirpath, filename)
+        
+    return texture_info
+
+
 def texture_relinker(texture_dir):
     """Takes the given folder, traverses immediate sub directories to relink
     textures based on their file name.
@@ -18,17 +37,12 @@ def texture_relinker(texture_dir):
         i for i in all_file_nodes
         if not os.path.exists(cmds.getAttr(f"{i}.fileTextureName"))
     ]
-    all_texture_dirs = [x[0] for x in os.walk(texture_dir)]
+    all_texture_info = get_all_texture_paths(texture_dir)
 
     for i in broken_file_nodes:
         filepath = cmds.getAttr(f"{i}.fileTextureName")
         basename = os.path.basename(filepath)
-
-        for path in all_texture_dirs:
-            new_texture_path = os.path.join(path, basename)
-            if os.path.exists(new_texture_path):
-                cmds.setAttr(f"{i}.fileTextureName", new_texture_path, type="string")
-                break
+        cmds.setAttr(f"{i}.fileTextureName", all_texture_info.get(basename), type="string")
 
 
 class PathField(QtWidgets.QWidget):
