@@ -2,7 +2,7 @@
 
 import os
 
-import maya.cmds as cmds
+from maya import cmds
 from PySide6 import QtWidgets
 
 
@@ -21,7 +21,6 @@ def get_all_texture_paths(folderPath):
         for filename in filenames:
             if filename not in texture_info:
                 texture_info[filename] = os.path.join(dirpath, filename)
-        
     return texture_info
 
 
